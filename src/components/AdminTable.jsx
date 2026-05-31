@@ -1,5 +1,6 @@
 import { useState } from 'react'
 import { useNavigate, useSearchParams } from 'react-router-dom'
+import { Edit3, Plus, Search, Trash2 } from 'lucide-react'
 import { toast } from 'sonner'
 import { apiRequest } from '../lib/api'
 import { getImageUrl, isValidImageFile } from '../lib/images'
@@ -12,6 +13,8 @@ import Pagination from './Pagination'
 import FilterBar from './FilterBar'
 import CreateEditModal from './CreateEditModal'
 import useApi from '../hooks/useApi'
+import PageHeader from './ui/PageHeader'
+import Button from './ui/Button'
 
 export default function AdminTable({
   title,
@@ -67,7 +70,6 @@ export default function AdminTable({
       toast.error('कृपया वैध इमेज फाइल चुनें')
       return false
     }
-
     return true
   }
 
@@ -117,7 +119,7 @@ export default function AdminTable({
     try {
       const body = hasImageField(formFields) ? buildFormData(formData) : buildJson(formData)
       await apiRequest(`${endpoint}/${id}`, { method: 'PATCH', body })
-      toast.success('रिकॉर्ड सफलतापूर्वक अपडेट हुआ')
+      toast.success('रिकॉर्ड अपडेट हुआ')
       setEditing(null)
       reload()
     } catch (err) {
@@ -138,23 +140,24 @@ export default function AdminTable({
     }
   }
 
+  function colLabel(col) {
+    return col.label || (typeof col === 'string' ? humanizeEnum(col) : humanizeEnum(col.key || ''))
+  }
+
   function renderCell(record, col) {
     const key = col.key || col
+    const label = colLabel(col)
     if (col.type === 'image') {
       return (
-        <td key={key} className="whitespace-nowrap px-4 py-3">
-          <img
-            src={getImageUrl(record[key] || record.image_url, 'thumbnail')}
-            alt=""
-            className="h-10 w-14 rounded object-cover"
-          />
+        <td key={key} data-label={label} className="whitespace-nowrap px-4 py-3">
+          <img src={getImageUrl(record[key] || record.image_url, 'thumbnail')} alt="" className="h-12 w-16 rounded-lg object-cover ring-1 ring-slate-200" />
         </td>
       )
     }
 
     const value = record[key]
     return (
-      <td key={key} className="whitespace-nowrap px-4 py-3 text-sm font-medium text-slate-700">
+      <td key={key} data-label={label} className="whitespace-nowrap px-4 py-3 text-sm font-semibold text-slate-700">
         {typeof value === 'string' ? humanizeEnum(value) : String(value ?? '')}
       </td>
     )
@@ -163,47 +166,52 @@ export default function AdminTable({
   const records = Array.isArray(data) ? data : data?.data || []
 
   return (
-    <div className="p-5">
-      <div className="mb-5 flex items-center justify-between">
-        <h1 className="text-xl font-black text-slate-900">{title}</h1>
+    <div className="p-4 sm:p-6">
+      <PageHeader
+        eyebrow="प्रबंधन"
+        title={title}
+        description="खोज, फिल्टर, रिकॉर्ड संपादन और साफ स्थिति संकेतों के साथ।"
+        actions={enableCreate && (
+          <Button type="button" onClick={() => setShowCreate(true)}>
+            <Plus size={16} />
+            नया बनाएं
+          </Button>
+        )}
+      />
+
+      <div className="mb-4 grid gap-3 lg:grid-cols-[1fr_auto]">
+        <div className="relative">
+          <Search className="pointer-events-none absolute left-3 top-1/2 -translate-y-1/2 text-slate-400" size={17} />
+          <input
+            className="input pl-10"
+            placeholder="नाम, शीर्षक या मोबाइल से खोजें..."
+            value={query.search || ''}
+            onChange={(e) => handleFilter('search', e.target.value)}
+          />
+        </div>
       </div>
 
-      {filters.length > 0 && (
-        <FilterBar filters={filters} query={query} onChange={handleFilter} />
-      )}
-
-      {enableCreate && (
-        <div className="mb-5">
-          <button onClick={() => setShowCreate(true)} className="btn-secondary">
-            नया बनाएं
-          </button>
-        </div>
-      )}
+      {filters.length > 0 && <FilterBar filters={filters} query={query} onChange={handleFilter} />}
 
       {loading && <TableSkeleton columns={columns.length} />}
       {error && <ErrorMessage message={error} />}
       {!loading && !error && records.length === 0 && (
-        <EmptyState message="कोई रिकॉर्ड नहीं मिला" />
+        <EmptyState title="कोई रिकॉर्ड नहीं मिला" message="फिल्टर बदलें या नया रिकॉर्ड बनाएं।" />
       )}
 
       {!loading && !error && records.length > 0 && (
-        <div className="overflow-hidden rounded-xl border border-slate-200 bg-white">
+        <div className="admin-table-card responsive-table">
           <div className="overflow-x-auto">
             <table className="min-w-full text-sm">
               <thead>
                 <tr className="border-b border-slate-200 bg-slate-50">
                   {columns.map((col) => (
-                    <th
-                      key={col.key || col}
-                      className="px-4 py-3.5 text-left text-xs font-bold uppercase tracking-wider text-slate-500"
-                    >
-                      {col.label || (typeof col === 'string' ? humanizeEnum(col) : humanizeEnum(col.key || ''))}
+                    <th key={col.key || col} className="px-4 py-3.5 text-left text-xs font-black uppercase tracking-wider text-slate-500">
+                      {colLabel(col)}
                     </th>
                   ))}
                   {(enableEdit || enableDelete) && (
-                    <th className="px-4 py-3.5 text-right text-xs font-bold uppercase tracking-wider text-slate-500">
-                      क्रियाएं
-                    </th>
+                    <th className="px-4 py-3.5 text-right text-xs font-black uppercase tracking-wider text-slate-500">क्रियाएं</th>
                   )}
                 </tr>
               </thead>
@@ -212,27 +220,23 @@ export default function AdminTable({
                   <tr
                     key={record.id}
                     className={`border-b border-slate-100 transition-colors last:border-b-0 ${
-                      detailPath ? 'cursor-pointer hover:bg-orange-50/50' : 'hover:bg-emerald-50/50'
+                      detailPath ? 'cursor-pointer hover:bg-orange-50/50' : 'hover:bg-slate-50'
                     } ${idx % 2 === 1 ? 'bg-slate-50/50' : 'bg-white'}`}
                     onClick={() => detailPath && navigate(detailPath.replace(':id', record.id))}
                   >
                     {columns.map((col) => renderCell(record, col))}
                     {(enableEdit || enableDelete) && (
-                      <td className="px-4 py-3 text-right">
+                      <td data-label="क्रियाएं" className="px-4 py-3 text-right">
                         <div className="flex items-center justify-end gap-2">
                           {enableEdit && (
-                            <button
-                              className="rounded-lg border border-slate-200 bg-white px-3 py-1.5 text-xs font-bold text-orange-600 transition-all hover:border-orange-300 hover:bg-orange-50"
-                              onClick={(e) => { e.stopPropagation(); setEditing(record) }}
-                            >
-                              संपादित करें
+                            <button className="btn-secondary min-h-9 px-3 py-1.5 text-xs" onClick={(e) => { e.stopPropagation(); setEditing(record) }}>
+                              <Edit3 size={14} />
+                              संपादित
                             </button>
                           )}
                           {enableDelete && (
-                            <button
-                              className="rounded-lg border border-slate-200 bg-white px-3 py-1.5 text-xs font-bold text-red-600 transition-all hover:border-red-300 hover:bg-red-50"
-                              onClick={(e) => { e.stopPropagation(); handleDelete(record.id) }}
-                            >
+                            <button className="btn-danger min-h-9 px-3 py-1.5 text-xs" onClick={(e) => { e.stopPropagation(); handleDelete(record.id) }}>
+                              <Trash2 size={14} />
                               हटाएं
                             </button>
                           )}

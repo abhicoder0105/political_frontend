@@ -4,18 +4,147 @@
   --font-sans: "Open Sans", "Noto Sans Devanagari", "Nirmala UI", system-ui, sans-serif;
 }
 
+:root {
+  color-scheme: light;
+  --brand: #c2410c;
+  --brand-dark: #9a3412;
+  --accent: #15803d;
+  --ink: #0f172a;
+  --muted: #64748b;
+  --surface: #ffffff;
+  --soft: #f8fafc;
+  --line: #e2e8f0;
+}
+
+html {
+  scroll-behavior: smooth;
+}
+
+body {
+  margin: 0;
+  min-width: 320px;
+  background:
+    radial-gradient(circle at top left, rgba(249, 115, 22, 0.10), transparent 30rem),
+    linear-gradient(180deg, #fff7ed 0%, #f8fafc 26rem, #f8fafc 100%);
+  color: var(--ink);
+  font-family: "Open Sans", "Noto Sans Devanagari", "Nirmala UI", system-ui, sans-serif;
+  text-rendering: optimizeLegibility;
+}
+
+button,
+input,
+select,
+textarea {
+  font: inherit;
+}
+
+a {
+  text-decoration: none;
+}
+
+.app-container {
+  @apply mx-auto w-full max-w-7xl px-4 sm:px-6 lg:px-8;
+}
+
+.page-section {
+  @apply py-10 sm:py-14;
+}
+
+.card {
+  @apply rounded-lg border border-slate-200 bg-white shadow-sm;
+}
+
+.card-elevated {
+  @apply rounded-lg border border-slate-200 bg-white shadow-[0_18px_50px_rgba(15,23,42,0.08)];
+}
+
 .input {
-  @apply w-full rounded-lg border border-slate-300 bg-white px-3 py-2 text-sm text-slate-800 outline-none transition-all placeholder:text-slate-400 focus:border-orange-400 focus:ring-2 focus:ring-orange-200;
+  @apply min-h-11 w-full rounded-lg border border-slate-300 bg-white px-3 py-2 text-sm text-slate-900 outline-none transition-all placeholder:text-slate-400 focus:border-orange-500 focus:ring-4 focus:ring-orange-100 disabled:cursor-not-allowed disabled:bg-slate-100 disabled:text-slate-400;
 }
 
 .label {
-  @apply mb-1 block text-xs font-bold uppercase tracking-wide text-slate-500;
+  @apply mb-1.5 block text-xs font-black uppercase tracking-wide text-slate-600;
+}
+
+.helper-text {
+  @apply mt-1.5 text-xs font-medium text-slate-500;
+}
+
+.field-error {
+  @apply mt-1.5 text-xs font-bold text-red-600;
 }
 
 .btn-primary {
-  @apply rounded-lg bg-orange-600 px-5 py-2 text-sm font-bold text-white transition-all hover:bg-orange-700 disabled:opacity-50;
+  @apply inline-flex min-h-11 items-center justify-center gap-2 rounded-lg bg-orange-600 px-5 py-2.5 text-sm font-black text-white shadow-sm shadow-orange-600/20 transition-all hover:bg-orange-700 focus:outline-none focus:ring-4 focus:ring-orange-200 disabled:cursor-not-allowed disabled:opacity-50;
 }
 
 .btn-secondary {
-  @apply rounded-lg border border-slate-300 bg-white px-4 py-2 text-sm font-bold text-slate-700 transition-all hover:bg-slate-50;
+  @apply inline-flex min-h-11 items-center justify-center gap-2 rounded-lg border border-slate-300 bg-white px-4 py-2.5 text-sm font-black text-slate-700 transition-all hover:border-orange-300 hover:bg-orange-50 hover:text-orange-700 focus:outline-none focus:ring-4 focus:ring-orange-100 disabled:cursor-not-allowed disabled:opacity-50;
+}
+
+.btn-ghost {
+  @apply inline-flex min-h-10 items-center justify-center gap-2 rounded-lg px-3 py-2 text-sm font-bold text-slate-600 transition-all hover:bg-slate-100 hover:text-slate-900 focus:outline-none focus:ring-4 focus:ring-slate-200;
+}
+
+.btn-danger {
+  @apply inline-flex min-h-10 items-center justify-center gap-2 rounded-lg border border-red-200 bg-white px-3 py-2 text-sm font-black text-red-600 transition-all hover:bg-red-50 focus:outline-none focus:ring-4 focus:ring-red-100 disabled:opacity-50;
+}
+
+.chip {
+  @apply inline-flex items-center gap-1.5 rounded-full px-3 py-1 text-xs font-black;
+}
+
+.section-eyebrow {
+  @apply text-xs font-black uppercase tracking-[0.18em] text-orange-600;
+}
+
+.focus-ring {
+  @apply focus:outline-none focus:ring-4 focus:ring-orange-200;
+}
+
+.admin-table-card {
+  @apply overflow-hidden rounded-lg border border-slate-200 bg-white shadow-sm;
+}
+
+@media (max-width: 767px) {
+  .responsive-table table,
+  .responsive-table thead,
+  .responsive-table tbody,
+  .responsive-table tr,
+  .responsive-table th,
+  .responsive-table td {
+    display: block;
+  }
+
+  .responsive-table thead {
+    display: none;
+  }
+
+  .responsive-table tr {
+    margin: 0.75rem;
+    border: 1px solid #e2e8f0;
+    border-radius: 0.75rem;
+    background: white;
+    overflow: hidden;
+  }
+
+  .responsive-table td {
+    display: flex;
+    align-items: flex-start;
+    justify-content: space-between;
+    gap: 1rem;
+    white-space: normal;
+    border-bottom: 1px solid #f1f5f9;
+    padding: 0.75rem 1rem;
+  }
+
+  .responsive-table td::before {
+    content: attr(data-label);
+    flex: 0 0 42%;
+    color: #64748b;
+    font-size: 0.72rem;
+    font-weight: 900;
+    letter-spacing: 0.04em;
+    text-transform: uppercase;
+  }
 }
