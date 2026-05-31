@@ -1,10 +1,11 @@
-import { useState, useEffect } from 'react'
-import { apiRequest } from '../../lib/api'
+import { useEffect, useState } from 'react'
 import { toast } from 'sonner'
+import { apiRequest } from '../../lib/api'
 import { TableSkeleton } from '../../components/Skeleton'
 import ErrorMessage from '../../components/ErrorMessage'
 import EmptyState from '../../components/EmptyState'
 import { USER_ROLES } from '../../constants'
+import { humanizeEnum } from '../../utils/enums'
 
 export default function RolesPermissions() {
   const [permissions, setPermissions] = useState([])
@@ -40,13 +41,13 @@ export default function RolesPermissions() {
     try {
       if (existing) {
         await apiRequest(`/api/role_permissions/${existing.id}`, { method: 'DELETE' })
-        toast.success('अनुमति हटा दी गई')
+        toast.success('अनुमति हटाई गई')
       } else {
         await apiRequest('/api/role_permissions', {
           method: 'POST',
           body: JSON.stringify({ role_permission: { role, permission_id: permissionId } }),
         })
-        toast.success('अनुमति जोड़ दी गई')
+        toast.success('अनुमति जोड़ी गई')
       }
       load()
     } catch {
@@ -55,12 +56,12 @@ export default function RolesPermissions() {
   }
 
   if (error) return <div className="p-5"><ErrorMessage message={error} /></div>
-  if (loading) return <div className="p-5"><h1 className="mb-5 text-xl font-black">भूमिका अनुमतियाँ</h1><TableSkeleton columns={permissions.length || 6} /></div>
-  if (permissions.length === 0) return <div className="p-5"><h1 className="mb-5 text-xl font-black">भूमिका अनुमतियाँ</h1><EmptyState message="कोई अनुमति नहीं मिली" /></div>
+  if (loading) return <div className="p-5"><h1 className="mb-5 text-xl font-black">भूमिका अनुमतियां</h1><TableSkeleton columns={permissions.length || 6} /></div>
+  if (permissions.length === 0) return <div className="p-5"><h1 className="mb-5 text-xl font-black">भूमिका अनुमतियां</h1><EmptyState message="कोई अनुमति नहीं मिली" /></div>
 
   return (
     <div className="p-5">
-      <h1 className="mb-5 text-xl font-black">भूमिका अनुमतियाँ</h1>
+      <h1 className="mb-5 text-xl font-black">भूमिका अनुमतियां</h1>
       <div className="overflow-auto rounded-lg border border-slate-200 bg-white">
         <table className="min-w-full text-sm">
           <thead className="bg-slate-50 text-left">
@@ -68,9 +69,9 @@ export default function RolesPermissions() {
               <th className="sticky left-0 z-10 bg-slate-50 px-4 py-3 text-xs font-bold uppercase tracking-wider text-slate-500">
                 भूमिका
               </th>
-              {permissions.map((p) => (
-                <th key={p.id} className="min-w-[120px] px-3 py-3 text-center text-xs font-bold uppercase tracking-wider text-slate-500" title={p.key}>
-                  {p.key}
+              {permissions.map((permission) => (
+                <th key={permission.id} className="min-w-[120px] px-3 py-3 text-center text-xs font-bold uppercase tracking-wider text-slate-500" title={permission.key}>
+                  {humanizeEnum(permission.key)}
                 </th>
               ))}
             </tr>
@@ -79,19 +80,19 @@ export default function RolesPermissions() {
             {USER_ROLES.map((role) => (
               <tr key={role} className="border-t">
                 <td className="sticky left-0 z-10 bg-white px-4 py-3 font-medium text-slate-700">
-                  {role}
+                  {humanizeEnum(role)}
                 </td>
-                {permissions.map((perm) => {
-                  const has = getRolePerm(role, perm.id)
+                {permissions.map((permission) => {
+                  const has = getRolePerm(role, permission.id)
                   return (
-                    <td key={perm.id} className="px-3 py-3 text-center">
+                    <td key={permission.id} className="px-3 py-3 text-center">
                       <button
                         className={`inline-flex h-8 w-8 items-center justify-center rounded-md border text-sm font-bold transition-colors ${
                           has
                             ? 'border-emerald-200 bg-emerald-50 text-emerald-700 hover:bg-red-50 hover:text-red-600'
                             : 'border-slate-200 text-slate-300 hover:border-emerald-200 hover:bg-emerald-50 hover:text-emerald-600'
                         }`}
-                        onClick={() => togglePermission(role, perm.id)}
+                        onClick={() => togglePermission(role, permission.id)}
                         title={has ? 'हटाने के लिए क्लिक करें' : 'जोड़ने के लिए क्लिक करें'}
                       >
                         {has ? '✓' : '○'}

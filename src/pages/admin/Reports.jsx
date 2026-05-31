@@ -13,12 +13,12 @@ export default function Reports() {
       {error && <ErrorMessage message={error} />}
       {data && (
         <div className="grid gap-5 md:grid-cols-2 lg:grid-cols-3">
-          <StatCard label="कुल जनसंख्या" icon="👥" value={data?.total_population_count} />
-          <StatCard label="समर्थक" icon="👍" value={data?.supporter_count} />
-          <StatCard label="सक्रिय शिकायतें" icon="📋" value={data?.active_complaints} />
-          <StatCard label="हल शिकायतें" icon="✅" value={data?.resolved_complaints} />
-          <StatCard label="गंभीर शिकायतें" icon="🔴" value={data?.critical_complaints} />
-          <StatCard label="गाँव की संख्या" icon="🏘️" value={data?.total_village_count} />
+          <StatCard label="कुल जनसंख्या" value={data?.total_population_count} />
+          <StatCard label="समर्थक" value={data?.supporter_count} />
+          <StatCard label="सक्रिय अनुरोध" value={data?.active_complaints} />
+          <StatCard label="हल अनुरोध" value={data?.resolved_complaints} />
+          <StatCard label="गंभीर अनुरोध" value={data?.critical_complaints} />
+          <StatCard label="गांवों की संख्या" value={data?.total_village_count} />
         </div>
       )}
     </div>

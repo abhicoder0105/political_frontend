@@ -14,31 +14,41 @@ export default function CampaignDetail() {
 
   return (
     <div className="mx-auto max-w-3xl px-4 py-16">
-      <Link to="/campaigns" className="text-sm font-bold text-orange-600 hover:underline">← वापस अभियान पर</Link>
+      <Link to="/campaigns" className="text-sm font-bold text-orange-600 hover:underline">
+        ← अभियान पर वापस
+      </Link>
       <div className="mt-6 overflow-hidden rounded-xl border border-slate-200 bg-white shadow-sm">
-        {campaign.image_url && (
-          <div className="relative h-56">
-            <LazyImage src={campaign.image_url} alt={campaign.title} className="h-full w-full object-cover" fallbackType="thumbnail" loading="eager" />
-            <div className="absolute inset-0 bg-gradient-to-t from-black/40 to-transparent" />
-            <div className="absolute bottom-3 left-3">
-              <StatusBadge value={campaign.campaign_status} />
-            </div>
+        <div className="relative h-56">
+          <LazyImage
+            src={campaign.image_url}
+            alt={campaign.title}
+            className="h-full w-full object-cover"
+            fallbackType="campaign"
+            loading="eager"
+          />
+          <div className="absolute inset-0 bg-gradient-to-t from-black/40 to-transparent" />
+          <div className="absolute bottom-3 left-3">
+            <StatusBadge value={campaign.campaign_status} />
           </div>
-        )}
-        <div className="p-6 space-y-4">
+        </div>
+        <div className="space-y-4 p-6">
           <h2 className="text-2xl font-black text-slate-900">{campaign.title}</h2>
           {campaign.description && (
-            <p className="text-sm leading-relaxed text-slate-700 whitespace-pre-line">{campaign.description}</p>
+            <p className="whitespace-pre-line text-sm leading-relaxed text-slate-700">{campaign.description}</p>
           )}
           <div className="flex flex-wrap gap-3 text-xs font-medium text-slate-500">
-            {campaign.target_area && <span>📍 {campaign.target_area}</span>}
-            {campaign.target_village && <span>🏘️ {campaign.target_village}</span>}
+            {campaign.target_area && <span>क्षेत्र: {campaign.target_area}</span>}
+            {campaign.target_village && <span>गांव/वार्ड: {campaign.target_village}</span>}
           </div>
-          <p className="text-xs font-medium text-slate-400">
-            {new Date(campaign.scheduled_at || campaign.created_at).toLocaleDateString('hi-IN', {
-              year: 'numeric', month: 'long', day: 'numeric'
-            })}
-          </p>
+          {(campaign.scheduled_at || campaign.created_at) && (
+            <p className="text-xs font-medium text-slate-400">
+              {new Date(campaign.scheduled_at || campaign.created_at).toLocaleDateString('hi-IN', {
+                year: 'numeric',
+                month: 'long',
+                day: 'numeric',
+              })}
+            </p>
+          )}
           <Link to={`/campaigns/${campaign.id}/support`} className="btn-primary inline-block">
             समर्थन करें
           </Link>

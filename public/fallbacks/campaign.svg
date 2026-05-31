@@ -1,0 +1,7 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="640" height="360" viewBox="0 0 640 360" role="img" aria-label="अभियान">
+  <rect width="640" height="360" fill="#f0fdf4"/>
+  <rect x="70" y="70" width="500" height="220" rx="18" fill="#dcfce7"/>
+  <rect x="126" y="118" width="290" height="34" rx="7" fill="#16a34a"/>
+  <rect x="126" y="176" width="390" height="22" rx="6" fill="#64748b"/>
+  <rect x="126" y="218" width="240" height="22" rx="6" fill="#94a3b8"/>
+</svg>
