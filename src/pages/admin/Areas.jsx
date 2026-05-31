@@ -1,0 +1,21 @@
+import AdminTable from '../../components/AdminTable'
+
+const FIELDS = [
+  { name: 'name', label: 'नाम', type: 'text' },
+  { name: 'vidhansabha_id', label: 'विधानसभा ID', type: 'text' },
+]
+
+export default function Areas() {
+  return (
+    <AdminTable
+      title="क्षेत्र / गाँव"
+      endpoint="/api/areas"
+      createPayloadKey="area"
+      columns={['name']}
+      formFields={FIELDS}
+      enableCreate
+      enableEdit
+      enableDelete
+    />
+  )
+}
