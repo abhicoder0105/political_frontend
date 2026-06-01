@@ -11,12 +11,14 @@ export default function OtpBox({ phoneNumber, purpose = 'request', onVerified })
   const [sent, setSent] = useState(false)
   const [verified, setVerified] = useState(false)
   const [seconds, setSeconds] = useState(0)
+  const [displayOtp, setDisplayOtp] = useState('')
 
   useEffect(() => {
     setOtp('')
     setSent(false)
     setVerified(false)
     setSeconds(0)
+    setDisplayOtp('')
   }, [phoneNumber, purpose])
 
   useEffect(() => {
@@ -32,12 +34,13 @@ export default function OtpBox({ phoneNumber, purpose = 'request', onVerified })
     }
     setSending(true)
     try {
-      await apiRequest('/api/otp/send', {
+      const data = await apiRequest('/api/otp/send', {
         method: 'POST',
         body: JSON.stringify({ phone_number: phoneNumber, purpose }),
       })
       setSent(true)
       setSeconds(30)
+      setDisplayOtp(data.otp || '')
       toast.success('OTP भेजा गया')
     } catch (err) {
       toast.error(err.message)
@@ -97,6 +100,14 @@ export default function OtpBox({ phoneNumber, purpose = 'request', onVerified })
           </button>
         )}
       </div>
+
+      {sent && !verified && displayOtp && (
+        <div className="mt-3 rounded-lg border-2 border-dashed border-amber-300 bg-amber-50 p-3 text-center">
+          <p className="text-xs font-semibold text-amber-700">आपका OTP कोड</p>
+          <p className="mt-1 text-3xl font-black tracking-widest text-amber-900 select-all">{displayOtp}</p>
+          <p className="mt-1 text-xs text-amber-600">यह OTP 5 मिनट के लिए वैध है</p>
+        </div>
+      )}
 
       {sent && !verified && (
         <div className="mt-4 grid gap-3 sm:grid-cols-[1fr_auto]">
